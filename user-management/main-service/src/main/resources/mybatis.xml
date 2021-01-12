@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF8"?>
+
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--默认使用的环境是development-->
+    <environments default="liufan">
+        <!--id标识这个环境，一个环境就是一个数据库连接-->
+        <environment id="liufan">
+            <transactionManager type="JDBC"></transactionManager>
+            <!--type表示数据源的类型，使用的是数据库连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/liufan?useUnicode=true&amp;characterEncoding=UTF-8&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--每一个Mapper.xml都需要在Mybatis的核心配置文件中注册-->
+    <mappers>
+        <!--路径是从类路径下开始的，实际上是target目录下的xml文件，所以必须添加扫描组件将xml输出到target目录下-->
+        <mapper resource="person/liufan/service/mapper/CityMapper.xml"></mapper>
+    </mappers>
+</configuration>
