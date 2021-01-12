@@ -23,6 +23,7 @@ import java.util.List;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html;charset=UTF-8");
         PrintWriter writer = resp.getWriter();
 
         LoginService service = new LoginServiceImpl();
@@ -35,7 +36,8 @@ public class LoginServlet extends HttpServlet {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
+        System.out.println(json);
         writer.println(json);
+
     }
 }

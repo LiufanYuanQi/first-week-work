@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import person.liufan.service.LoginService;
 import person.liufan.service.entity.City;
 import person.liufan.service.mapper.CityMapper;
+import person.liufan.service.util.Mappers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,26 +22,7 @@ public class LoginServiceImpl implements LoginService {
     public List<City> listCity() {
         String config = "mybatis.xml";
         InputStream in = null;
-        List<City> list = null;
-        try {
-            in= Resources.getResourceAsStream(config);
-            SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
-            SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(in);
-            SqlSession sqlSession = sqlSessionFactory.openSession();
-            CityMapper mapper = sqlSession.getMapper(CityMapper.class);
-            list = mapper.listCity();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
+        List<City> list = Mappers.getCityMapper().listCity();
         return list;
     }
 }
