@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../js/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="../js/jquery/jquery-1.11.1-min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap_3.3.0/js/bootstrap.min.js"></script>    <title>注册</title>
+</head>
+<script>
+    $(function () {
+        $("#username").focus();
+        $.ajax({
+            data: {},
+            type: {},
+            url: {},
+            success(data) {
+
+            }
+        })
+        $("#submitBtn").click(function () {
+            $.ajax({
+                data:{
+                    loginact: $("#loginAct").val(),
+                    loginpwd: $("#loginPwd").val()
+                },
+                type: "post",
+                url: "/userLogin",
+                success(data) {
+                    if (data.flag == true) {
+                        window.location.href = "workbench";
+                    }else {
+                        alert(data.message);
+                    }
+                }
+            })
+        });
+    });
+</script>
+<body>
+<div>
+    <div style="position: absolute;top: 20%;left: 50%;margin-left: -150px">
+        <form action="" class="form-horizontal" role="form">
+            <div class="page-header">
+                <h1>注册</h1>
+            </div>
+            <div class="form-group">
+                <div class="input-group" style="width: 350px">
+                    <span class="input-group-addon" >名称</span>
+                    <input type="text" id="username" class="form-control" placeholder="Username" aria-describedby="sizing-addon2">
+                </div>
+
+                <div class="input-group" style="width: 350px; position: relative;top: 10px">
+                    <span class="input-group-addon">密码</span>
+                    <input type="text" id="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon2">
+                </div>
+                
+                <div class="input-group" style="width: 350px; position: relative; top: 20px">
+                    <span class="input-group-addon">邮箱</span>
+                    <input type="text" id="email" class="form-control" placeholder="E-mail" aria-describedby="sizing-addon2">
+                </div>
+                <div class="btn-group btn-group-lg" style="width: 175px; position: relative; top: 40px">
+                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        省市 <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="provinces">
+                    </ul>
+                </div>
+                <div class="btn-group btn-group-lg" style="width: 175px; position: relative; top: 40px">
+                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        城市 <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="cities">
+                    </ul>
+                </div>
+                <button type="button" id="submitBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">提交</button>
+
+
+            </div>
+
+
+        </form>
+    </div>
+</div>
+</body>
+</html>

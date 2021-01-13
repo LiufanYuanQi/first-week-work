@@ -22,5 +22,6 @@
     <mappers>
         <!--路径是从类路径下开始的，实际上是target目录下的xml文件，所以必须添加扫描组件将xml输出到target目录下-->
         <mapper resource="person/liufan/service/mapper/CityMapper.xml"></mapper>
+        <mapper resource="person/liufan/service/mapper/ProvinceMapper.xml"></mapper>
     </mappers>
 </configuration>

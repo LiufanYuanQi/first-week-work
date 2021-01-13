@@ -1,5 +1,8 @@
 package person.liufan.service.entity;
 
+import java.beans.Transient;
+import java.util.List;
+
 public class Province {
     private Integer id;
 
@@ -8,6 +11,8 @@ public class Province {
     private String alias;
 
     private Byte resource;
+
+    private List<City> cities;
 
     public Integer getId() {
         return id;
@@ -39,5 +44,13 @@ public class Province {
 
     public void setResource(Byte resource) {
         this.resource = resource;
+    }
+
+    public List<City> getCities() {
+        return cities;
+    }
+
+    public void setCities(List<City> cities) {
+        this.cities = cities;
     }
 }

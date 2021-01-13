@@ -1,5 +1,7 @@
 package person.liufan.service.entity;
 
+import java.util.List;
+
 public class City {
     private Long id;
 
@@ -16,6 +18,7 @@ public class City {
     private Integer resource;
 
     private Integer sort;
+
 
     public Long getId() {
         return id;

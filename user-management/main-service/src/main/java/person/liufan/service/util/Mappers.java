@@ -18,20 +18,7 @@ import java.util.List;
  * @version 创建时间：2021/1/12
  */
 public class Mappers {
-    private static CityMapper cityMapper = null;
-    private static ProvinceMapper provinceMapper = null;
-
-
-    public static CityMapper getCityMapper() {
-        if (cityMapper == null) {
-            cityMapper = getMapper(CityMapper.class);
-        }
-        return cityMapper;
-    }
-
-
-
-    private static <T> T getMapper(Class<T> mapperClass) {
+    public static <T> T getMapper(Class<T> mapperClass) {
         String config = "mybatis.xml";
         T mapper = null;
         try (InputStream in = Resources.getResourceAsStream(config)) {

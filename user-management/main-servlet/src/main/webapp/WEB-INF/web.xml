@@ -10,10 +10,18 @@
     <servlet-name>UserLogin</servlet-name>
     <servlet-class>person.liufan.servlet.LoginServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>Provinces</servlet-name>
+    <servlet-class>person.liufan.servlet.ProvinceServlet</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>UserLogin</servlet-name>
     <url-pattern>/userlogin</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Provinces</servlet-name>
+    <url-pattern>/provinces</url-pattern>
   </servlet-mapping>
 
 </web-app>

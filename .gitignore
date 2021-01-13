@@ -1,0 +1,3 @@
+# Project exclude paths
+/user-management/main-service/target/
+/user-management/main-servlet/target/
