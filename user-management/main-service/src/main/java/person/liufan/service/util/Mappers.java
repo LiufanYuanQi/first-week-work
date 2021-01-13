@@ -18,17 +18,28 @@ import java.util.List;
  * @version 创建时间：2021/1/12
  */
 public class Mappers {
-    public static <T> T getMapper(Class<T> mapperClass) {
+    private static SqlSession sqlSession = null;
+
+    static {
         String config = "mybatis.xml";
-        T mapper = null;
+        SqlSessionFactory sqlSessionFactory = null;
         try (InputStream in = Resources.getResourceAsStream(config)) {
             SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
-            SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(in);
-            SqlSession sqlSession = sqlSessionFactory.openSession();
-            mapper = sqlSession.getMapper(mapperClass);
+            sqlSessionFactory = sqlSessionFactoryBuilder.build(in);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return mapper;
+        sqlSession = sqlSessionFactory.openSession();
+    }
+
+    public static  <T> T getMapper(Class<T> mapperClass) {
+        return sqlSession.getMapper(mapperClass);
+    }
+
+
+
+    public static void myBatisCommit() {
+        sqlSession.commit();
     }
 }

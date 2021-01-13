@@ -18,4 +18,6 @@ public interface CityMapper {
     Integer updateByPrimaryKeySelective(City record);
 
     Integer updateByPrimaryKey(City record);
+
+    List<City> listCityByProvince(Long provinceId);
 }

@@ -2,9 +2,13 @@ package person.liufan.servlet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import person.liufan.service.CityService;
+import person.liufan.service.entity.City;
 import person.liufan.service.entity.Province;
+import person.liufan.service.impl.CityServiceImpl;
 import person.liufan.service.impl.ProvinceServiceImpl;
 import person.liufan.service.ProvinceService;
+import person.liufan.util.MyPrintOut;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,21 +28,23 @@ import java.util.List;
  */
 public class ProvinceServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType("text/html;charset=UTF-8");
-        PrintWriter writer = resp.getWriter();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String type = request.getParameter("type");
 
-        ProvinceService provinceService = new ProvinceServiceImpl();
-        List<Province> list = provinceService.listProvince();
-
-        ObjectMapper om = new ObjectMapper();
-        String json = "{}";
-        try {
-            json = om.writeValueAsString(list);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        if ("province".equals(type)) {
+            ProvinceService provinceService = new ProvinceServiceImpl();
+            List<Province> list = provinceService.listProvince();
+            MyPrintOut.printJson(response,list);
         }
-        System.out.println(json);
-        writer.println(json);
+        if ("city".equals(type)) {
+            CityService cityService = new CityServiceImpl();
+            Long provinceId = Long.valueOf(request.getParameter("provinceId"));
+            List<City> list = cityService.listCity(provinceId);
+            MyPrintOut.printJson(response,list);
+        }
+
+
+
+
     }
 }

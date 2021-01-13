@@ -19,8 +19,13 @@
     <include refid="Base_Column_List" />
     from hai_location
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="listCityByProvince" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
+    <include refid="Base_Column_List" />
+    from hai_location
+    where province_id = #{provinceId}
+  </select><select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
     <include refid="Base_Column_List" />
     from hai_location
     where id = #{id,jdbcType=BIGINT}

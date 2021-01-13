@@ -5,7 +5,10 @@
 <web-app>
 
   <display-name>Archetype Created Web Application</display-name>
-
+  <servlet>
+    <servlet-name>Register</servlet-name>
+    <servlet-class>person.liufan.servlet.UserRegisterServlet</servlet-class>
+  </servlet>
   <servlet>
     <servlet-name>UserLogin</servlet-name>
     <servlet-class>person.liufan.servlet.LoginServlet</servlet-class>
@@ -14,7 +17,10 @@
     <servlet-name>Provinces</servlet-name>
     <servlet-class>person.liufan.servlet.ProvinceServlet</servlet-class>
   </servlet>
-
+  <servlet-mapping>
+    <servlet-name>Register</servlet-name>
+    <url-pattern>/register</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>UserLogin</servlet-name>
     <url-pattern>/userlogin</url-pattern>
