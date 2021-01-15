@@ -21,4 +21,12 @@ public class ProvinceServiceImpl implements ProvinceService {
         List<Province> provinces = provinceMapper.listProvince();
         return provinces;
     }
+
+    @Override
+    public String getProvinceAndCity(Integer provinceId, Long cityId) {
+        Province province = Mappers.getMapper(ProvinceMapper.class).selectByPrimaryKey(provinceId);
+        City city = Mappers.getMapper(CityMapper.class).selectByPrimaryKey(cityId);
+        String  provinceAndCity = province.getName() + "/" + city.getCity();
+        return provinceAndCity;
+    }
 }

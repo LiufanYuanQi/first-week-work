@@ -8,8 +8,9 @@
 </head>
 <script>
     $(function () {
-        $("#username").focus();
-
+        /**
+         * 当省份改变时发送改变省份的id查询对应city，并将city进行填充
+         * */
         $("#provinces").change(function (data) {
             var provinceId = data.target.value;
             $.ajax({
@@ -24,11 +25,12 @@
                     $.each($.parseJSON(data),function (i, v) {
                         $("#cities").append("<option id='city'  value=" + v.id + " >" + v.city +"</option>")
                     });
-
                 }
             })
         });
-
+        /**
+         * 页面加载请求province数据，并且进行填充
+         * */
         $.ajax({
             data: {
                 type: "province"
@@ -43,67 +45,61 @@
 
             }
         })
-
+        /**
+         * 进行表单验证
+         * */
         $("#username").blur(function () {
-            if (($("#username").val()) == null) {
-                alert("用户名不能为空");
-            }
             let isTrue = /^[a-zA-Z0-9]{1,}$/;
             if (!isTrue.test($("#username").val())) {
                 alert("用户名只能由字母和数字组成");
             }
         })
         $("#password").blur(function () {
-            if (($("#password").val()) == null) {
-                alert("密码不能为空");
-            }
             let isTrue = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
             if (!isTrue.test($("#password").val())) {
                 alert("密码大于8位，且必须包含大小写字母和数字");
             }
         })
         $("#email").blur(function () {
-            if (($("#email").val()) == null) {
-                alert("邮箱不能为空");
-            }
             let isTrue = /^([A-Za-z0-9_\-\.\u4e00-\u9fa5])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,8})/;
             if (!isTrue.test($("#email").val())) {
                 alert("邮箱格式错误");
             }
         })
-
-
-
-
+        /**
+         * 进行表单验证
+         * 验证成功
+         * 提交数据给后端，后端进行保存
+         * 验证失败提示
+         * */
         $("#submitBtn").click(function () {
-            let hobbies = "";
-            $.each($("input[name='hobby']:checked"),function (i,v) {
-                hobbies = hobbies + v.value;
-                console.log($("input[name='hobby']:checked").length);
-                if (i < $("input[name='hobby']:checked").length - 1) {
-                    hobbies = hobbies + ",";
-                }
-
-            })
-            console.log(hobbies);
-            $.ajax({
-                url: "/register",
-                type: "GET",
-                data: {
-                    username: $("#username").val(),
-                    password: $("#password").val(),
-                    email: $("#email").val(),
-                    provinceId: $("#provinces").val(),
-                    cityId: $("#cities").val(),
-                    hobbies: hobbies
-                },
-                dataType: {},
-                success() {
-
-                }
-            })
-
-
+            if (formCheck()) {
+                let hobbies = "";
+                $.each($("input[name='hobby']:checked"), function (i, v) {
+                    hobbies = hobbies + v.value;
+                    console.log($("input[name='hobby']:checked").length);
+                    if (i < $("input[name='hobby']:checked").length - 1) {
+                        hobbies = hobbies + ",";
+                    }
+                });
+                $.ajax({
+                    url: "/register",
+                    type: "GET",
+                    data: {
+                        username: $("#username").val(),
+                        password: $("#password").val(),
+                        email: $("#email").val(),
+                        provinceId: $("#provinces").val(),
+                        cityId: $("#cities").val(),
+                        hobbies: hobbies
+                    },
+                    dataType: {},
+                    success() {
+                    }
+                });
+            } else {
+                alert("请重新修改信息");
+            }
         });
     });
     function formCheck() {
@@ -141,6 +137,10 @@
                 flag = false;
             }
         })
+        if ($("input[name='hobby']:checked").length < 2) {
+            alert("兴趣爱好至少两个");
+            flag = false;
+        }
         return flag;
     }
 

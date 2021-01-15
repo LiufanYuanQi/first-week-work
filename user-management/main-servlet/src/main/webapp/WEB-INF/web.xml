@@ -5,6 +5,23 @@
 <web-app>
 
   <display-name>Archetype Created Web Application</display-name>
+
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>person.liufan.filter.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/static/html/main/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>Position</servlet-name>
+    <servlet-class>person.liufan.servlet.PositionServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>UserManagement</servlet-name>
+    <servlet-class>person.liufan.servlet.UserManagementServlet</servlet-class>
+  </servlet>
   <servlet>
     <servlet-name>Register</servlet-name>
     <servlet-class>person.liufan.servlet.UserRegisterServlet</servlet-class>
@@ -12,18 +29,32 @@
   <servlet>
     <servlet-name>UserLogin</servlet-name>
     <servlet-class>person.liufan.servlet.LoginServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet>
     <servlet-name>Provinces</servlet-name>
     <servlet-class>person.liufan.servlet.ProvinceServlet</servlet-class>
   </servlet>
+
+
+
+
+  
+  <servlet-mapping>
+    <servlet-name>Position</servlet-name>
+    <url-pattern>/positionmanagement</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UserManagement</servlet-name>
+    <url-pattern>/usermanagement</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Register</servlet-name>
     <url-pattern>/register</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>UserLogin</servlet-name>
-    <url-pattern>/userlogin</url-pattern>
+    <url-pattern>/userLogin</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Provinces</servlet-name>

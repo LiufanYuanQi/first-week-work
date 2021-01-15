@@ -10,28 +10,88 @@
 	if(window.top!=window){
 		window.top.location=window.location;
 	}
+	/**
+	 * 将表单结果发给后端验证，成功进行跳转，失败弹出后端返回message
+	 * */
 	$(function () {
 		$("#user").focus();
-		$("#workbenchBtn").click(function () {
-			$.ajax({
-				data:{
-					loginact: $("#loginAct").val(),
-					loginpwd: $("#loginPwd").val()
-				},
-				type: "post",
-				url: "/userLogin",
-				success(data) {
-					if (data.flag == true) {
-						window.location.href = "workbench";
-					}else {
-						alert(data.message);
+		$("#loginBtn").click(function () {
+			if (validate()) {
+				$.ajax({
+					data:{
+						type: "login",
+						userName: $("#loginAct").val(),
+						userPassword: $("#loginPwd").val()
+					},
+					type: "get",
+					url: "/userLogin",
+					success(data) {
+						let obj = $.parseJSON(data);
+						if (obj.flag == true) {
+							window.location.href = "main/usermanagement.html";
+						}else {
+							alert(obj.message);
+						}
 					}
-				}
-			})
+				});
+			}
 		});
 	});
+
+	var code;
+
+	//在全局 定义验证码
+	function createCode() {
+		code = "";
+		var codeLength = 6;
+		//验证码的长度
+		var checkCode = document.getElementById("checkCode");
+		var selectChar = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+		//所有候选组成验证码的字符，当然也可以用中文的
+		for (var i = 0; i < codeLength; i++) {
+			var charIndex = Math.floor(Math.random() * 36);
+			code += selectChar[charIndex];
+		}
+		if (checkCode) {
+			checkCode.className = "code";
+			checkCode.value = code;
+		}
+	}
+
+	function validate() {
+		var inputCode = document.getElementById("input1").value;
+		if (inputCode.length <= 0) {
+			alert("请输入验证码！");
+		} else if (inputCode.toLowerCase() != code.toLowerCase()) {
+
+			console.log("inputCode" + inputCode);
+			console.log("code" + code);
+			alert("验证码输入错误！");
+			createCode();
+			//刷新验证码
+			return false;
+		} else {
+			return true;
+		}
+	}
 </script>
-<body>
+<style type="text/css">
+	#checkCode {
+		font-family: Arial;
+		font-style: italic;
+		color: Red;
+		border: 0;
+		padding: 2px 3px;
+		letter-spacing: 3px;
+		font-weight: bolder;
+	}
+
+	.unchanged {
+		border: 0;
+	}
+</style>
+
+<body onload="createCode()">
 	<div style="position: absolute; height: 100%; width: 100%; top: 0px; bottom: 0px;overflow:hidden; word-break:break-all;background: green;">
 		<img src="../image/IMG_20210113_101857.jpg" style="position: relative;width: 100%; height: 100%;">
 	</div>
@@ -56,9 +116,22 @@
 							<span id="msg"></span>
 						
 					</div>
-					<button type="button" id="workbenchBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
+					<div>
+						<form action="#">
+							<div style="width: 175px; position: relative;top: 40px;">
+								<input type="text" onclick="createCode()" readonly="readonly" id="checkCode" class="form-control"/><br/>
+							</div>
+							<div style="width: 175px; position: relative;top: 40px;">
+
+								<input id="input1" class="form-control" type="text" placeholder="验证码">
+
+							</div>
+
+						</form>
+					</div>
+					<button type="button" id="loginBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">登录</button>
 					<div style="position: relative;top: 30px;">
-						<button type="button"  class="btn btn-success btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">注册</button>
+						<button type="button" id="registerBtn" class="btn btn-success btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">注册</button>
 					</div>
 
 				</div>

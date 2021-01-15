@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<link href="../../js/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="../../js/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="../../js/jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="../../js/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+
+
+
+<script type="text/javascript">
+
+	$(function () {
+		/**
+		 * 当添加框省份下拉框改变时，发送ajax请求获取城市信息，并填充
+		 * */
+		$("#provinces").change(function (data) {
+			var provinceId = data.target.value;
+			$.ajax({
+				data: {
+					type: "city",
+					provinceId: provinceId
+				},
+				type: "get",
+				url: "/provinces",
+				success(data) {
+					$("#cities").empty();
+					$.each($.parseJSON(data),function (i, v) {
+						$("#cities").append("<option id='city'  value=" + v.id + " >" + v.city +"</option>")
+					});
+				}
+			})
+		});
+
+		/**
+		 * 当修改框省份下拉框改变时，发送ajax请求获取城市信息，并填充
+		 * */
+		$("#editprovinces").change(function (data) {
+			var provinceId = data.target.value;
+			$.ajax({
+				data: {
+					type: "city",
+					provinceId: provinceId
+				},
+				type: "get",
+				url: "/provinces",
+				success(data) {
+					$("#editcities").empty();
+					$.each($.parseJSON(data),function (i, v) {
+						$("#editcities").append("<option id='city'  value=" + v.id + " >" + v.city +"</option>")
+					});
+				}
+			})
+		});
+
+		/**
+		 * 当光标离开时进行表单的校验
+		 * */
+		$("#username").blur(function () {
+			let isTrue = /^[a-zA-Z0-9]{1,}$/;
+			if (!isTrue.test($("#username").val())) {
+				alert("用户名只能由字母和数字组成");
+			}
+		})
+		$("#password").blur(function () {
+			let isTrue = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
+			if (!isTrue.test($("#password").val())) {
+				alert("密码大于8位，且必须包含大小写字母和数字");
+			}
+		})
+		$("#email").blur(function () {
+			let isTrue = /^([A-Za-z0-9_\-\.\u4e00-\u9fa5])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,8})/;
+			if (!isTrue.test($("#email").val())) {
+				alert("邮箱格式错误");
+			}
+		})
+
+
+		/**
+		 * 点击添加，重置添加表单数据并请求省份信息进行填充，弹出添加模态框
+		 * */
+		$("#addActivity").click(function () {
+			$("#username").val("");
+			$("#password").val("");
+			$("#email").val("");
+			$("input[name='hobby']:checked").prop("checked", false);
+			$.ajax({
+				data: {
+					type: "province"
+				},
+				type: "get",
+				url: "/provinces",
+				success(data) {
+					$("#provinces").empty();
+					$("#provinces").append("<option value=\"\">省份</option>")
+					$.each($.parseJSON(data),function (i, v) {
+						$("#provinces").append("<option id='province'  value=" + v.id + " >" + v.name +"</option>")
+					});
+				}
+			})
+			$("#cities").empty();
+			$("#cities").append("<option value=\"\">城市</option>")
+		});
+		/**
+		 * 提交提交表单信息给后端进行保存
+		 * */
+		$("#submitBtn").click(function () {
+			let hobbies = "";
+			$.each($("input[name='hobby']:checked"),function (i,v) {
+				hobbies = hobbies + v.value;
+				console.log($("input[name='hobby']:checked").length);
+				if (i < $("input[name='hobby']:checked").length - 1) {
+					hobbies = hobbies + ",";
+				}
+			})
+			$.ajax({
+				url: "/register",
+				type: "GET",
+				data: {
+					username: $("#username").val(),
+					password: $("#password").val(),
+					email: $("#email").val(),
+					provinceId: $("#provinces").val(),
+					cityId: $("#cities").val(),
+					hobbies: hobbies
+				},
+				async: false,
+				dataType: {},
+				success() {}
+			})
+			console.log("success");
+			$("#createActivityModal").modal("hide");
+			getForm();
+		});
+
+		/**
+		 * 获取需要修改的detail的id发送给服务器返回结果，将结果进行回响，弹出修改模态框
+		 * */
+		$("#editActivity").click(function () {
+			if ($("input[name=check]:checked").length == 0) {
+				alert("请选择要修改的数据");
+			} else if ($("input[name=check]:checked").length != 1) {
+				alert("只能修改单条数据");
+			} else {
+				$.ajax({
+					data: {
+						type: "queryById",
+						id: $("input[name=check]:checked").val()
+					},
+					async: false,
+					url: "/usermanagement",
+					type: "get",
+					success(data) {
+						let obj = $.parseJSON(data);
+						$("#editid").val(obj.id);
+						$("#editusername").val(obj.userName);
+						$("#editpassword").val(obj.userPassword);
+						$("#editemail").val(obj.userEmail);
+						$("#currentProvinceId").val(obj.userProvince);
+						$("#currentCityId").val(obj.userCity);
+						$(":checkbox[name='edithobby']").prop("checked",false);
+						var hobbies = new Array();
+						hobbies = obj.userHobby.split(",");
+						for (var i = 0; i < hobbies.length; i++) {
+							$(":checkbox[value='"+hobbies[i]+"']").prop("checked",true);
+						}
+					}
+				})
+				$.ajax({
+					data: {
+						type: "province"
+					},
+					type: "get",
+					url: "/provinces",
+					success(data) {
+						$("#editprovinces").empty();
+						$("#editprovinces").append("<option value=\"\">省份</option>")
+						$.each($.parseJSON(data),function (i, v) {
+							$("#editprovinces").append("<option id='province'  value=" + v.id + " >" + v.name +"</option>")
+						});
+						let currentProvinceId = $("#currentProvinceId").val()
+						$(`#editprovinces option[value=${currentProvinceId}]`).prop("selected",true);
+					}
+				})
+				$.ajax({
+					data: {
+						type: "city",
+						provinceId: $("#currentProvinceId").val()
+					},
+					type: "get",
+					url: "/provinces",
+					success(data) {
+						$("#editcities").empty();
+						$.each($.parseJSON(data),function (i, v) {
+							$("#editcities").append("<option id='city'  value=" + v.id + " >" + v.city +"</option>")
+						});
+						let currentCityId = $("#currentCityId").val()
+						$(`#editcities option[value=${currentCityId}]`).prop("selected",true);
+					}
+				})
+				$("#editActivityModal").modal("show");
+			}
+		});
+		/**
+		 * 提交修改表单信息，给后端进行更新
+		 * */
+		$("#editsubmitBtn").click(function () {
+			let hobbies = "";
+			$.each($("input[name='edithobby']:checked"),function (i,v) {
+				hobbies = hobbies + v.value;
+				console.log($("input[name='edithobby']:checked").length);
+				if (i < $("input[name='edithobby']:checked").length - 1) {
+					hobbies = hobbies + ",";
+				}
+			})
+			$.ajax({
+				url: "/usermanagement",
+				type: "GET",
+				data: {
+					type: "update",
+					id: $("#editid").val(),
+					username: $("#editusername").val(),
+					password: $("#editpassword").val(),
+					email: $("#editemail").val(),
+					provinceId: $("#editprovinces").val(),
+					cityId: $("#editcities").val(),
+					hobbies: hobbies
+				},
+				async: false,
+				dataType: {},
+				success() {}
+			})
+			console.log("success");
+			$("#editActivityModal").modal("hide");
+			getForm();
+		});
+		/**
+		 * 获取需要修改职位的detail的id发送服务端，返回查询结果进行回响，弹出职位模态框
+		 * */
+		$("#positionActivity").click(function () {
+			if ($("input[name=check]:checked").length == 0) {
+				alert("请选择用户");
+			} else if ($("input[name=check]:checked").length != 1) {
+				alert("只能显示一个用户职位");
+			} else {
+				let currentPosition = "";
+				$.ajax({
+					data: {
+						type: "queryPositionById",
+						id: $("input[name=check]:checked").val()
+
+					},
+					async: false,
+					url: "/usermanagement",
+					type: "get",
+					success(data) {
+						console.log(data);
+						currentPosition = data;
+					}
+				})
+
+				$.ajax({
+					data: {
+						type: "queryDetail"
+					},
+					type: "get",
+					url: "/positionmanagement",
+					success(data) {
+						$("#positions").empty();
+						console.log(currentPosition);
+						if (currentPosition == "暂无职位") {
+							$("#positions").append("<option>暂无职位</option>");
+						}
+						$.each($.parseJSON(data),function (i, v) {
+							$("#positions").append("<option id= " + v.userPosition + " name='position'  value=" + v.id + " >" + v.userPosition +"</option>")
+						});
+						$(`#positions option[id=${currentPosition}]`).prop("selected",true);
+					}
+				});
+				$("#editUserPositionModal").modal("show");
+			}
+		});
+		/**
+		 * 获取选中userid发送后端删除对应的user-position关系
+		 * */
+		$("#deleteUserPositionBtn").click(function () {
+			$.ajax({
+				data: {
+					type: "deleteUserPosition",
+					id: $("input[name=check]:checked").val()
+				},
+				type: "get",
+				url: "/usermanagement",
+				success(data) {
+					alert("删除职位成功");
+					getForm();
+				}
+			});
+
+		});
+		/**
+		 * 获取选中的userid发送后端，如果不存在添加职位关系，存在修改职位关系
+		 * */
+		$("#editUserPositionBtn").click(function () {
+			$.ajax({
+				data: {
+					type: "updateUserPosition",
+					userId: $("input[name=check]:checked").val(),
+					positionId: $("#positions").val()
+				},
+				type: "get",
+				url: "/usermanagement",
+				success(data) {
+					alert("修改职位成功");
+					getForm();
+				}
+			});
+		})
+		/**
+		 * 获取选中框的id，将ids发送给后台，后台进行删除，成功刷新表单
+		 */
+		$("#deleteActivity").click(function () {
+			deleteActivity();
+		});
+		function deleteActivity() {
+			var deleteList = "";
+			if ($("input[name=check]:checked").length == 0) {
+				alert("请选择删除的数据");
+				return;
+			} else {
+				for (var i = 0; i < $("input[name=check]:checked").length; i++) {
+					deleteList += $("input[name=check]:checked")[i].value
+					if (i < $("input[name=check]:checked").length - 1) {
+						deleteList += "&";
+					}
+				}
+			}
+			$.ajax({
+				data: {
+					type: "delete",
+					deleteList: deleteList
+				},
+				url: "/usermanagement",
+				type: "get",
+				success(data) {
+					getForm();
+				}
+			});
+		}
+		/**
+		 * 将输入框的数据输入到隐藏域中，用于查询
+		 * */
+		setHidden();
+		function setHidden() {
+			$("#user").val($("#selectuser").val())
+		}
+		getForm();
+		/**
+		 * 通过条件查询,将查询输入框中的数据赋值给隐藏域，使用隐藏域中的数据进行表单更新
+		 * */
+		$("#selectBtn").click(function () {
+			setHidden();
+			getForm();
+		});
+		/**
+		 * 重置查询框数据和隐藏域数据，并更新详情
+		 * */
+		$("#resetBtn").click(function () {
+			resetQuery();
+			getForm();
+		});
+		/**
+		 * 重置查询框和隐藏域中的值
+		 */
+		function resetQuery() {
+			$("#user").val("");
+			$("#selectuser").val("");
+		}
+		/**
+		 * 全选
+		 * */
+		$("#selectAll").click(function () {
+			$("input[name=check]").prop("checked", this.checked);
+		});
+		$("#detailTbl").on("click", $("input[name=check]"), function () {
+			$("#selectAll").prop("checked", $("input[name=check]").length == $("input[name=check]:checked").length);
+		});
+		/**
+		 * 刷新表单
+		 * */
+		function getForm() {
+			$.ajax({
+				data: {
+					type: "queryDetail",
+					username: $("#user").val()
+				},
+				type: "get",
+				url: "/usermanagement",
+				success(data) {
+					$("#detailTbl").empty();
+					$.each($.parseJSON(data), function (i, n) {
+						if (n.position == undefined) {
+							console.log(n.position);
+							n.position = "暂无职位";
+						}
+						$("#detailTbl").append("<tr class=\"active\">\n" +
+								"<td><input name='check' value='" + n.id + "' type=\"checkbox\" /></td>\n" +
+								"<td>" + n.id + "</td>\n" +
+								"<td>" + n.userName + "</td>\n" +
+								"<td>" + n.userEmail + "</td>\n" +
+								"<td>" + n.userProvinceAndCity + "</td>\n" +
+								"<td>" + n.createTime + "</td>\n" +
+								"<td>" + n.position + "</td>\n" +
+								"</tr>");
+					});
+				}
+			});
+		}
+	});
+
+
+</script>
+</head>
+<body>
+
+	<!-- 创建市场活动的模态窗口 -->
+	<div class="modal fade" id="createActivityModal" role="dialog">
+		<div class="modal-dialog" role="document" style="width: 50%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel1">创建用户</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height: 400px">
+						<div style="position: relative;top: 5%;left: 50%;margin-left: -150px">
+							<form action="/register" class="form-horizontal" role="form" onsubmit="return false">
+								<div class="form-group">
+									<div class="input-group" style="width: 350px">
+										<span class="input-group-addon" >名称</span>
+										<input type="text" id="username" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" name="username">
+									</div>
+
+									<div class="input-group" style="width: 350px; position: relative;top: 10px">
+										<span class="input-group-addon">密码</span>
+										<input type="text" id="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon2" name="password">
+									</div>
+
+									<div class="input-group" style="width: 350px; position: relative; top: 20px">
+										<span class="input-group-addon">邮箱</span>
+										<input type="text" id="email" class="form-control" placeholder="E-mail" aria-describedby="sizing-addon2" name="email">
+									</div>
+									<div class="btn-group btn-group-lg" style="width: 175px; position: relative; top: 40px">
+										<select id="provinces" class="selectpicker show-tick form-control" data-live-search="true" name="province" >
+											<option value="">省份</option>
+										</select>
+									</div>
+									<div class="btn-group btn-group-lg" style="width: 175px; position: relative; top: 40px">
+										<select id="cities" class="selectpicker show-tick form-control" data-live-search="true" name="city" >
+											<option value="">城市</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<div style="width: 350px;height: 34px;position: relative; top: 50px">
+										<label class="input-group-addon" style="width: 53px">爱好</label>
+
+									</div>
+
+									<div class="checkbox" style="width: 350px; position: relative;left: 90px;top: 10px">
+										<label>
+											<input name="hobby" type="checkbox" value="唱歌">唱歌
+										</label>
+										<label>
+											<input name="hobby" type="checkbox" value="跳舞">跳舞
+										</label>
+										<label>
+											<input name="hobby" type="checkbox" value="打篮球">打篮球
+										</label>
+										<label>
+											<input name="hobby" type="checkbox" value="看书">看书
+										</label>
+									</div>
+
+								</div>
+								<div class="form-group">
+									<button type="button" id="submitBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">提交</button>
+								</div>
+
+
+							</form>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 修改市场活动的模态窗口 -->
+	<div class="modal fade" id="editActivityModal" role="dialog">
+		<div class="modal-dialog" role="document" style="width: 50%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">修改用户</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height: 400px">
+						<div style="position: relative;top: 5%;left: 50%;margin-left: -150px">
+							<form action="/register" class="form-horizontal" role="form" onsubmit="return false">
+								<div class="form-group">
+									<div class="input-group" style="width: 350px">
+										<input type="hidden" id="editid">
+										<span class="input-group-addon" >名称</span>
+										<input type="text" id="editusername" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" name="username">
+									</div>
+
+									<div class="input-group" style="width: 350px; position: relative;top: 10px">
+										<span class="input-group-addon">密码</span>
+										<input type="text" id="editpassword" class="form-control" placeholder="Password" aria-describedby="sizing-addon2" name="password">
+									</div>
+
+									<div class="input-group" style="width: 350px; position: relative; top: 20px">
+										<span class="input-group-addon">邮箱</span>
+										<input type="text" id="editemail" class="form-control" placeholder="E-mail" aria-describedby="sizing-addon2" name="email">
+									</div>
+									<div class="btn-group btn-group-lg" style="width: 175px; position: relative; top: 40px">
+										<input type="hidden" id="currentProvinceId">
+										<select id="editprovinces" class="selectpicker show-tick form-control" data-live-search="true" name="province" >
+											<option value="">省份</option>
+										</select>
+									</div>
+									<div class="btn-group btn-group-lg" style="width: 175px; position: relative; top: 40px">
+										<input type="hidden" id="currentCityId">
+										<select id="editcities" class="selectpicker show-tick form-control" data-live-search="true" name="city" >
+											<option value="">城市</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<div style="width: 350px;height: 34px;position: relative; top: 50px">
+										<label class="input-group-addon" style="width: 53px">爱好</label>
+
+									</div>
+
+									<div class="checkbox" style="width: 350px; position: relative;left: 90px;top: 10px">
+										<label>
+											<input name="edithobby" type="checkbox" value="唱歌">唱歌
+										</label>
+										<label>
+											<input name="edithobby" type="checkbox" value="跳舞">跳舞
+										</label>
+										<label>
+											<input name="edithobby" type="checkbox" value="打篮球">打篮球
+										</label>
+										<label>
+											<input name="edithobby" type="checkbox" value="看书">看书
+										</label>
+									</div>
+
+								</div>
+								<div class="form-group">
+									<button type="button" id="editsubmitBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">提交</button>
+								</div>
+
+
+							</form>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="editUserPositionModal" role="dialog">
+		<div class="modal-dialog" role="document" style="width: 50%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel3">修改职位</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height: 120px">
+						<div style="position: relative;top: 5%;left: 50%;margin-left: -150px">
+							<form action="/register" class="form-horizontal" role="form" onsubmit="return false">
+								<div class="form-group">
+									<div class="input-group" style="width: 175px">
+										<label for="positions">当前职位</label>
+										<select id="positions" class="selectpicker show-tick form-control" data-live-search="true" name="province" >
+
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<button id="deleteUserPositionBtn" type="button" class="btn btn-warning" data-dismiss="modal">删除</button>
+									<button id="editUserPositionBtn" type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	
+	<div>
+		<div style="position: relative; left: 10px; top: -10px;">
+			<div class="page-header">
+				<h3>用户列表</h3>
+			</div>
+		</div>
+	</div>
+	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
+		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
+		
+			<div class="btn-toolbar" role="toolbar" style="height: 80px;">
+				<form class="form-inline" role="form" style="position: relative;top: 8%; left: 5px;">
+
+
+				  
+				  <div class="form-group">
+				    <div class="input-group">
+				      <div class="input-group-addon">用户</div>
+				      <input id="user" type="hidden">
+				      <input id="selectuser" class="form-control" type="text">
+				    </div>
+				  </div>
+
+				  	<button id="selectBtn" type="button" class="btn btn-default">查询</button>
+					<button id="resetBtn" type="button" class="btn btn-default">重置</button>
+				  
+				</form>
+			</div>
+			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
+				<div class="btn-group" style="position: relative; top: 18%;">
+				  <button type="button" id="addActivity" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" id="editActivity" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" id="positionActivity" class="btn btn-primary"><span class="glyphicon glyphicon-user"></span> 职位</button>
+				  <button type="button" id="deleteActivity" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				</div>
+				
+			</div>
+
+			<!--详情表格-->
+			<div style="position: relative;top: 10px;">
+				<table class="table table-hover">
+					<thead>
+						<tr style="color: #B3B3B3;">
+							<td><input id="selectAll" type="checkbox" /></td>
+							<td>id</td>
+							<td>用户</td>
+                            <td>邮箱</td>
+							<td>地区</td>
+							<td>创建时间</td>
+							<td>职位</td>
+						</tr>
+					</thead>
+					<tbody id="detailTbl">
+					</tbody>
+				</table>
+			</div>
+
+			<!--分页以后再做-->
+			<nav aria-label="Page navigation">
+				<ul class="pagination" id="page">
+					<li>
+						<a href="#" aria-label="Previous">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+
+					<li>
+						<a href="#" aria-label="Next">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		
+	</div>
+</body>
+</html>

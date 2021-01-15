@@ -15,7 +15,6 @@ public interface CityService {
      * @param provinceId 省份编号
      * @return 通过省份编号查出的对应城市
      *
-     * 对City相关服务的接口
      */
     List<City> listCity(Long provinceId);
 }

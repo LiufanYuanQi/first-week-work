@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<link href="../../js/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="../../js/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="../../js/jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="../../js/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+
+
+
+<script type="text/javascript">
+
+	$(function () {
+		getForm();
+		/**
+		 * 重置添加模态框，弹出模态框
+		 * */
+		$("#addPosition").click(function () {
+			$("#position").val("");
+		});
+		/**
+		 * 获取修改id，后端查询结果并进行回响，弹出修改模态框
+		 * */
+		$("#editPosition").click(function () {
+			if ($("input[name=check]:checked").length == 0) {
+				alert("请选择要修改的数据");
+			} else if ($("input[name=check]:checked").length != 1) {
+				alert("只能修改单条数据");
+			} else {
+				$.ajax({
+					data: {
+						type: "queryById",
+						id: $("input[name=check]:checked").val()
+					},
+					async: false,
+					url: "/positionmanagement",
+					type: "get",
+					success(data) {
+						console.log(data);
+						let obj = $.parseJSON(data);
+						$("#currentId").val(obj.id);
+						$("#editPositionText").val(obj.userPosition);
+					}
+				})
+				$("#editActivityModal").modal("show");
+			}
+		});
+		/**
+		 * 刷新按钮，刷新表单
+		 * */
+		$("#refreshPosition").click(function (){
+			getForm();
+		})
+		/**
+		 * 删除按钮，获取要删除的id删除职位发送后端进行删除
+		 * */
+		$("#deletePosition").click(function () {
+			var deleteList = "";
+			if ($("input[name=check]:checked").length == 0) {
+				alert("请选择删除的数据");
+				return;
+			} else {
+				for (var i = 0; i < $("input[name=check]:checked").length; i++) {
+					deleteList += $("input[name=check]:checked")[i].value
+					if (i < $("input[name=check]:checked").length - 1) {
+						deleteList += "&";
+					}
+				}
+			}
+			$.ajax({
+				data: {
+					type: "delete",
+					deleteList: deleteList
+				},
+				url: "/positionmanagement",
+				type: "get",
+				success(data) {
+					getForm();
+				}
+			});
+		})
+		/**
+		 * 全选
+		 * */
+		$("#selectAll").click(function () {
+			$("input[name=check]").prop("checked", this.checked);
+		});
+		$("#detailTbl").on("click", $("input[name=check]"), function () {
+			$("#selectAll").prop("checked", $("input[name=check]").length == $("input[name=check]:checked").length);
+		});
+
+		/**
+		 * 添加表单提交按钮，将表单数据发送后端，成功刷新detail
+		 * */
+		$("#addPositionBtn").click(function () {
+			$.ajax({
+				data: {
+					type: "save",
+					position: $("#position").val()
+				},
+				url: "/positionmanagement",
+				type: "get",
+				success() {
+					getForm();
+				}
+			})
+		});
+		/**
+		 * 修改提交按钮，将修改的结果发送后端进行保存，成功刷新detail
+		 * */
+		$("#editPositionBtn").click(function () {
+			$.ajax({
+				data: {
+					type: "update",
+					id: $("#currentId").val(),
+					position: $("#editPositionText").val()
+				},
+				url: "/positionmanagement",
+				type: "get",
+				success() {
+					getForm();
+				}
+			})
+		});
+		/**
+		 * 刷新表单
+		 * */
+		function getForm() {
+			$.ajax({
+				data: {
+					type: "queryDetail"
+				},
+				type: "get",
+				url: "/positionmanagement",
+				success(data) {
+					$("#detailTbl").empty();
+					$.each($.parseJSON(data), function (i, n) {
+						$("#detailTbl").append("<tr class=\"active\">\n" +
+								"<td><input name='check' value='" + n.id + "' type=\"checkbox\" /></td>\n" +
+								"<td>" + n.id + "</td>\n" +
+								"<td>" + n.userPosition + "</td>\n" +
+								"</tr>");
+					});
+				}
+			});
+		}
+	});
+
+
+</script>
+</head>
+<body>
+
+	<!-- 创建市场活动的模态窗口 -->
+
+	<div class="modal fade" id="createActivityModal" role="dialog">
+		<div class="modal-dialog" role="document" style="width: 50%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel1">添加职位</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height: 120px">
+						<div style="position: relative;top: 5%;left: 50%;margin-left: -150px">
+							<form action="/register" class="form-horizontal" role="form" onsubmit="return false">
+								<div class="form-group">
+									<div class="input-group" style="width: 350px">
+										<span class="input-group-addon" >职位</span>
+										<input type="text" id="position" class="form-control" placeholder="Position" aria-describedby="sizing-addon2" name="username">
+									</div>
+								</div>
+								<!--<div class="form-group">
+									<button type="button" id="submitBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">提交</button>
+								</div>-->
+								<div class="form-group">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+									<button id="addPositionBtn" type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+								</div>
+
+
+							</form>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	<!-- 修改市场活动的模态窗口 -->
+	<div class="modal fade" id="editActivityModal" role="dialog">
+		<div class="modal-dialog" role="document" style="width: 50%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel2">修改职位</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height: 120px">
+						<div style="position: relative;top: 5%;left: 50%;margin-left: -150px">
+							<form action="/register" class="form-horizontal" role="form" onsubmit="return false">
+								<div class="form-group">
+									<div class="input-group" style="width: 350px">
+										<span class="input-group-addon" >职位</span>
+										<input type="hidden" id="currentId">
+										<input type="text" id="editPositionText" class="form-control" placeholder="Position" aria-describedby="sizing-addon2" name="username">
+									</div>
+								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+									<button id="editPositionBtn" type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	
+	
+	
+	<div>
+		<div style="position: relative; left: 10px; top: -10px;">
+			<div class="page-header">
+				<h3>职位列表</h3>
+			</div>
+		</div>
+	</div>
+	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
+		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
+			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
+				<div class="btn-group" style="position: relative; top: 18%;">
+				  <button type="button" id="addPosition" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" id="editPosition" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" id="refreshPosition" class="btn btn-info"><span class="glyphicon glyphicon-refresh"></span> 刷新</button>
+				  <button type="button" id="deletePosition" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				</div>
+				
+			</div>
+
+			<!--详情表格-->
+			<div style="position: relative;top: 10px;">
+				<table class="table table-hover">
+					<thead>
+						<tr style="color: #B3B3B3;">
+							<td><input id="selectAll" type="checkbox" /></td>
+							<td>id</td>
+							<td>职位</td>
+						</tr>
+					</thead>
+					<tbody id="detailTbl">
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+	</div>
+</body>
+</html>

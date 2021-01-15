@@ -29,6 +29,8 @@
         <mapper resource="person/liufan/service/mapper/CityMapper.xml"></mapper>
         <mapper resource="person/liufan/service/mapper/ProvinceMapper.xml"></mapper>
         <mapper resource="person/liufan/service/mapper/UserMapper.xml"></mapper>
+        <mapper resource="person/liufan/service/mapper/PositionMapper.xml"></mapper>
+        <mapper resource="person/liufan/service/mapper/UserAndPositionMapper.xml"></mapper>
     </mappers>
 
 </configuration>

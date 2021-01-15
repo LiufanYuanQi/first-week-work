@@ -14,7 +14,12 @@ import java.io.PrintWriter;
  * 封装响应网页的工具类
  */
 public class MyPrintOut {
-
+    /**
+     * 将object对象转换为json数据输出
+     * @param response
+     * @param object
+     * @throws IOException
+     */
     public static void printJson(HttpServletResponse response, Object object) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter writer = response.getWriter();

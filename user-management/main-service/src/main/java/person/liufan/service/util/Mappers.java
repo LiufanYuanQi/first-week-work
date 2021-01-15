@@ -16,10 +16,14 @@ import java.util.List;
 /**
  * @author liufan E-mail:fan.liu@biz-united.com.cn
  * @version 创建时间：2021/1/12
+ * 对mybatis操作的封装
  */
 public class Mappers {
     private static SqlSession sqlSession = null;
 
+    /**
+     * 初始化创建sqlSession
+     * */
     static {
         String config = "mybatis.xml";
         SqlSessionFactory sqlSessionFactory = null;
@@ -32,13 +36,18 @@ public class Mappers {
         }
         sqlSession = sqlSessionFactory.openSession();
     }
-
+    /**
+     * 获取接口动态代理对象
+     * @param mapperClass
+     * @param <T>
+     * @return
+     */
     public static  <T> T getMapper(Class<T> mapperClass) {
         return sqlSession.getMapper(mapperClass);
     }
-
-
-
+    /**
+     * 提交事务
+     */
     public static void myBatisCommit() {
         sqlSession.commit();
     }

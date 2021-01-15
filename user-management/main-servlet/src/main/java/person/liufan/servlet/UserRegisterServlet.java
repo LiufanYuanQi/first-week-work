@@ -1,9 +1,8 @@
 package person.liufan.servlet;
 
-import javafx.scene.input.DataFormat;
-import person.liufan.service.RegisterService;
+import person.liufan.service.UserService;
 import person.liufan.service.entity.User;
-import person.liufan.service.impl.RegisterServiceImpl;
+import person.liufan.service.impl.UserServiceImpl;
 import person.liufan.util.MyPrintOut;
 
 import javax.servlet.ServletException;
@@ -11,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -29,8 +26,8 @@ import java.util.Date;
 public class UserRegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RegisterService registerService = new RegisterServiceImpl();
-        Boolean flag = registerService.sava(toUser(request));
+        UserService userService = new UserServiceImpl();
+        Boolean flag = userService.sava(toUser(request));
         MyPrintOut.printJson(response,flag);
     }
 
