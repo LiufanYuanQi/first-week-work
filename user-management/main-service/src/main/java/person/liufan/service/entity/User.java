@@ -2,23 +2,47 @@ package person.liufan.service.entity;
 
 import java.util.Date;
 
+/**
+ * @author liufan E-mail:fan.liu@biz-united.com.cn
+ * @version 创建时间：2021/1/15
+ * tb_user的实体类，用于保存用户信息
+ */
 public class User {
+    /**
+     * id
+     */
     private Long id;
-
+    /**
+     * 用户名
+     */
     private String userName;
-
+    /**
+     * 密码
+     */
     private String userPassword;
-
+    /**
+     * 邮箱
+     */
     private String userEmail;
-
+    /**
+     * 用户所在省份id
+     */
     private Integer userProvince;
-
+    /**
+     * 用户所在城市id
+     */
     private Long userCity;
-
+    /**
+     * 创建时间
+     */
     private Date createTime;
-
+    /**
+     * 修改时间
+     */
     private Date updateTime;
-
+    /**
+     * 用户爱好
+     */
     private String userHobby;
 
     public Long getId() {

@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface CityService {
     /**
+     * 通过省份编号查出的对应城市
      * @param provinceId 省份编号
-     * @return 通过省份编号查出的对应城市
-     *
+     * @return 城市集合
      */
     List<City> listCity(Long provinceId);
 }

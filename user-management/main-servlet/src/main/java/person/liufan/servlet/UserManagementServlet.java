@@ -1,5 +1,6 @@
 package person.liufan.servlet;
 
+import person.liufan.constant.ServletConsts;
 import person.liufan.service.ProvinceService;
 import person.liufan.service.UserPositionService;
 import person.liufan.service.UserService;
@@ -29,13 +30,13 @@ import java.util.List;
 public class UserManagementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String type = request.getParameter("type");
+        String type = request.getParameter(ServletConsts.TYPE);
         UserService userService = new UserServiceImpl();
         UserPositionService userPositionService = new UserPositionServiceImpl();
         /**
          * 查询所有的user并且封装成vo返回前端
          */
-        if ("queryDetail".equals(type)) {
+        if (ServletConsts.TYPE_QUERY_DETAIL.equals(type)) {
             List<User> users = userService.listUserDetailByName(request.getParameter("username"));
             List<UserDetailVO> voList = new ArrayList<>();
             for (User obj : users) {
@@ -56,7 +57,7 @@ public class UserManagementServlet extends HttpServlet {
         /**
          * 通过id获取user对应的user对象输出
          */
-        if ("queryById".equals(type)) {
+        if (ServletConsts.TYPE_QUERY_BY_ID.equals(type)) {
             String id = request.getParameter("id");
             User user = userService.getUserById(id);
             MyPrintOut.printJson(response, user);
@@ -64,7 +65,7 @@ public class UserManagementServlet extends HttpServlet {
         /**
          * 将前端传入的参数进行更新
          */
-        if ("update".equals(type)) {
+        if (ServletConsts.TYPE_UPDATE.equals(type)) {
             User user = toUser(request);
             Boolean flag = userService.updateUser(user);
             MyPrintOut.printJson(response, flag);
@@ -72,7 +73,7 @@ public class UserManagementServlet extends HttpServlet {
         /**
          * 将前端传来的多个id进行处理，批量删除
          */
-        if ("delete".equals(type)) {
+        if (ServletConsts.TYPE_DELETE.equals(type)) {
             String param = request.getParameter("deleteList");
             String[] ids = param.split("&");
             Boolean flag = userService.deleteUserByIds(ids);
@@ -81,7 +82,7 @@ public class UserManagementServlet extends HttpServlet {
         /**
          * 通过userid获取对应的职位
          */
-        if ("queryPositionById".equals(type)) {
+        if (ServletConsts.TYPE_QUERY_POSITION_BY_ID.equals(type)) {
             Long userId = Long.valueOf(request.getParameter("id"));
             String position = userPositionService.queryPositionByUserId(userId);
             MyPrintOut.printJson(response, position);
@@ -89,7 +90,7 @@ public class UserManagementServlet extends HttpServlet {
         /**
          * 通过userid删除对应的用户职位关系
          */
-        if ("deleteUserPosition".equals(type)) {
+        if (ServletConsts.TYPE_DELETE_USER_POSITION.equals(type)) {
             Long userId = Long.valueOf(request.getParameter("id"));
             Boolean flag = userPositionService.deletePosition(userId);
             MyPrintOut.printJson(response, flag);
@@ -97,7 +98,7 @@ public class UserManagementServlet extends HttpServlet {
         /**
          * 通过userid更新对应的用户职位关系
          */
-        if ("updateUserPosition".equals(type)) {
+        if (ServletConsts.TYPE_UPDATE_USER_POSITION.equals(type)) {
             Long userId = Long.valueOf(request.getParameter("userId"));
             Long positionId = Long.valueOf(request.getParameter("positionId"));
 

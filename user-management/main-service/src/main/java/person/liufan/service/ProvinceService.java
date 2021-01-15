@@ -12,15 +12,15 @@ public interface ProvinceService {
 
     /**
      * 查询所有的省份
-     * @return
+     * @return 查询到的省份集合
      */
     List<Province> listProvince();
 
     /**
      * 通过省份id和城市id查询对应的省市并返回province/city形式
-     * @param provinceId
-     * @param cityId
-     * @return
+     * @param provinceId 需要查询的省份id
+     * @param cityId 需要查询的城市id
+     * @return 查询到的省份和城市
      */
     String getProvinceAndCity(Integer provinceId, Long cityId);
 }

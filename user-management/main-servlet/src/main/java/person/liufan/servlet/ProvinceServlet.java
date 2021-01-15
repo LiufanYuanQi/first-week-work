@@ -1,5 +1,6 @@
 package person.liufan.servlet;
 
+import person.liufan.constant.ServletConsts;
 import person.liufan.service.CityService;
 import person.liufan.service.ProvinceService;
 import person.liufan.service.entity.City;
@@ -24,11 +25,11 @@ import java.util.List;
 public class ProvinceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String type = request.getParameter("type");
+        String type = request.getParameter(ServletConsts.TYPE);
         /**
          * 返回所有省份
          */
-        if ("province".equals(type)) {
+        if (ServletConsts.TYPE_PROVINCE.equals(type)) {
             ProvinceService provinceService = new ProvinceServiceImpl();
             List<Province> list = provinceService.listProvince();
             MyPrintOut.printJson(response,list);
@@ -36,7 +37,7 @@ public class ProvinceServlet extends HttpServlet {
         /**
          * 返回所有的城市
          */
-        if ("city".equals(type)) {
+        if (ServletConsts.TYPE_CITY.equals(type)) {
             CityService cityService = new CityServiceImpl();
             Long provinceId = Long.valueOf(request.getParameter("provinceId"));
             List<City> list = cityService.listCity(provinceId);

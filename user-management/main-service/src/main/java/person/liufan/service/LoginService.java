@@ -15,8 +15,8 @@ import java.util.Map;
 public interface LoginService {
     /**
      * 验证账户
-     * @param userName
-     * @param password
+     * @param userName 用户名
+     * @param password 用户密码
      * @return map key：flag 为true时存入k"user",v:user对象
      *         flag为false时 存入message：错误信息
      */

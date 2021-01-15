@@ -1,5 +1,6 @@
 package person.liufan.servlet;
 
+import person.liufan.constant.ServletConsts;
 import person.liufan.service.PositionService;
 import person.liufan.service.entity.Position;
 import person.liufan.service.impl.PositionServiceImpl;
@@ -19,46 +20,51 @@ import java.util.List;
  * 这个servlet用于处理职务的增删改查
  */
 public class PositionServlet extends HttpServlet {
+
+    private static final String PARAMETER_ID = "id";
+    private static final String PARAMETER_POSITION = "position";
+    private static final String PARAMETER_DELETE_LIST = "deleteList";
+    private static final String PARAMETER_SPLIT = "&";
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String type = request.getParameter("type");
+        String type = request.getParameter(ServletConsts.TYPE);
         PositionService positionService = new PositionServiceImpl();
         /**
          * 保存对应职位
          */
-        if ("save".equals(type)) {
-            Boolean flag = positionService.save(request.getParameter("position"));
+        if (ServletConsts.TYPE_SAVE.equals(type)) {
+            Boolean flag = positionService.save(request.getParameter(PARAMETER_POSITION));
             MyPrintOut.printJson(response, flag);
         }
         /**
          * 查询所有的职位返回list
          */
-        if ("queryDetail".equals(type)) {
+        if (ServletConsts.TYPE_QUERY_DETAIL.equals(type)) {
             List<Position> list = positionService.listPosition();
             MyPrintOut.printJson(response, list);
         }
         /**
          * 通过id查询对应职位
          */
-        if ("queryById".equals(type)) {
-            Position position = positionService.queryPosition(request.getParameter("id"));
+        if (ServletConsts.TYPE_QUERY_BY_ID.equals(type)) {
+            Position position = positionService.queryPosition(request.getParameter(PARAMETER_ID));
             MyPrintOut.printJson(response,position);
         }
         /**
          * 通过id更新职位
          */
-        if ("update".equals(type)) {
+        if (ServletConsts.TYPE_UPDATE.equals(type)) {
             Position position = new Position();
-            position.setId(Long.valueOf(request.getParameter("id")));
-            position.setUserPosition(request.getParameter("position"));
+            position.setId(Long.valueOf(request.getParameter(PARAMETER_ID)));
+            position.setUserPosition(request.getParameter(PARAMETER_POSITION));
             Boolean flag = positionService.updatePosition(position);
         }
         /**
          * 通过id删除职位
          */
-        if ("delete".equals(type)) {
-            String param = request.getParameter("deleteList");
-            String[] ids = param.split("&");
+        if (ServletConsts.TYPE_DELETE.equals(type)) {
+            String param = request.getParameter(PARAMETER_DELETE_LIST);
+            String[] ids = param.split(PARAMETER_SPLIT);
             Boolean flag = positionService.deleteUserByIds(ids);
             MyPrintOut.printJson(response, flag);
         }

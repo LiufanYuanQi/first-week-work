@@ -23,7 +23,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map login(String userName, String password) {
-        Map map = new HashMap();
+        Map map = new HashMap(4);
         boolean flag = false;
         User user = new User();
         user.setUserName(userName);

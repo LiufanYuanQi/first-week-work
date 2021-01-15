@@ -1,22 +1,42 @@
 package person.liufan.service.entity;
 
-import java.util.List;
-
+/**
+ * @author liufan E-mail:fan.liu@biz-united.com.cn
+ * @version 创建时间：2021/1/15
+ * hai_location实体类，保存城市信息
+ */
 public class City {
+    /**
+     * 城市id
+     */
     private Long id;
-
+    /**
+     * 国家编号
+     */
     private String country;
-
+    /**
+     * 省份id
+     */
     private Long provinceId;
-
+    /**
+     * 省份名称
+     */
     private String state;
-
+    /**
+     * 城市名称
+     */
     private String city;
-
+    /**
+     * 城市ASCII码
+     */
     private String cityascii;
-
+    /**
+     * 是否是资源城市
+     */
     private Integer resource;
-
+    /**
+     * 排序编号
+     */
     private Integer sort;
 
 
