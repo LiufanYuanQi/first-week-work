@@ -38,7 +38,7 @@
         </javaClientGenerator>
 
         <!-- 数据库表名及对应的 Java 模型类名 -->
-        <table tableName="hai_location" domainObjectName="City"
+        <table tableName="tb_user_position" domainObjectName="UserAndPosition"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
