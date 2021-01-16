@@ -1,5 +1,6 @@
 package person.liufan.service;
 
+import com.github.pagehelper.PageInfo;
 import person.liufan.service.entity.User;
 import person.liufan.service.vo.UserDetailVO;
 
@@ -25,7 +26,7 @@ public interface UserService {
      * @param name 需要查询的名字
      * @return 查询到的结果
      */
-    List<User> listUserDetailByName(String name);
+    PageInfo<User> listUserDetailByName(String name, int pageNum, int pageSize);
 
     /**
      * 通过id获取User

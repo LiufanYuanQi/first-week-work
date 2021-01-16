@@ -8,10 +8,7 @@ import person.liufan.service.impl.UserPositionServiceImpl;
 import person.liufan.util.MyPrintOut;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.Map;
 
@@ -31,7 +28,7 @@ import java.util.Map;
  *
  */
 public class LoginServlet extends HttpServlet {
-
+    private static final String AUTO_LOGIN = "autoLogin";
 
     @Override
     public void init() {
@@ -49,6 +46,7 @@ public class LoginServlet extends HttpServlet {
          * 验证成功放入session中
          */
         if (ServletConsts.TYPE_LOGIN.equals(type)) {
+            Boolean autoLogin = false;
             String userName = request.getParameter(ServletConsts.PARAMETER_USER_NAME);
             String password = request.getParameter(ServletConsts.PARAMETER_USER_PASSWORD);
             Map map = userService.login(userName, password);
@@ -56,6 +54,20 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute(ServletConsts.LOGIN_USER, map.get(ServletConsts.LOGIN_USER));
                 map.remove(ServletConsts.LOGIN_USER);
+                /*
+                * 如果勾选了免登陆，则添加cookie
+                * */
+                autoLogin = Boolean.valueOf(request.getParameter(AUTO_LOGIN));
+                if (autoLogin) {
+                    Cookie nameCookie = new Cookie(ServletConsts.PARAMETER_USER_NAME,userName);
+                    Cookie passwordCookie = new Cookie(ServletConsts.PARAMETER_USER_PASSWORD, password);
+                    nameCookie.setMaxAge(60*60*24*90);
+                    passwordCookie.setMaxAge(60*60*24*90);
+                    nameCookie.setPath("/");
+                    passwordCookie.setPath("/");
+                    response.addCookie(nameCookie);
+                    response.addCookie(passwordCookie);
+                }
             }
             MyPrintOut.printJson(response,map);
         }

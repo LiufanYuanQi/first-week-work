@@ -1,5 +1,7 @@
 package person.liufan.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import person.liufan.service.UserService;
 import person.liufan.service.entity.City;
 import person.liufan.service.entity.Province;
@@ -39,11 +41,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> listUserDetailByName(String name) {
+    public PageInfo<User> listUserDetailByName(String name,int pageNum,int pageSize) {
         User user = new User();
         user.setUserName(name);
+        PageHelper.startPage(pageNum, pageSize);
         List<User> list = userMapper.listUserByName(user);
-        return list;
+        PageInfo<User> pageInfo = new PageInfo<>(list);
+        pageInfo.getTotal();
+        return pageInfo;
     }
 
     @Override

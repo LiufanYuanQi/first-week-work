@@ -391,21 +391,40 @@
 			$("#selectAll").prop("checked", $("input[name=check]").length == $("input[name=check]:checked").length);
 		});
 		/**
-		 * 刷新表单
+		 * 分页按钮
 		 * */
-		function getForm() {
+		$("#page").on("click",".entity",function (){
+			$("#currentPage").val($(this).val()+1);
+			getFromByPage();
+		})
+		$("#page").on("click","#previous",function () {
+			if ($("#currentPage").val() > 1) {
+				$("#currentPage").val($("#currentPage").val() - 1);
+			}
+			getFromByPage();
+		})
+		$("#page").on("click","#next",function () {
+			if ($("#currentPage").val() < $("#allPage").val()) {
+				$("#currentPage").val(parseInt($("#currentPage").val()) + 1);
+			}
+			getFromByPage();
+		})
+
+		function getFromByPage() {
+			let pageSize = 10;
 			$.ajax({
 				data: {
 					type: "queryDetail",
-					username: $("#user").val()
+					username: $("#user").val(),
+					pageNum: $("#currentPage").val(),
+					pageSize: pageSize
 				},
 				type: "get",
 				url: "/usermanagement",
 				success(data) {
 					$("#detailTbl").empty();
-					$.each($.parseJSON(data), function (i, n) {
+					$.each($.parseJSON(data).data, function (i, n) {
 						if (n.position == undefined) {
-							console.log(n.position);
 							n.position = "暂无职位";
 						}
 						$("#detailTbl").append("<tr class=\"active\">\n" +
@@ -418,8 +437,87 @@
 								"<td>" + n.position + "</td>\n" +
 								"</tr>");
 					});
+					$("#page").empty();
+					$("#page").append("<li id='previous'>\n" +
+							"\t\t\t\t\t\t<a href=\"#\" aria-label=\"Previous\">\n" +
+							"\t\t\t\t\t\t\t<span aria-hidden=\"true\">&laquo;</span>\n" +
+							"\t\t\t\t\t\t</a>\n" +
+							"\t\t\t\t\t</li>");
+					for (var i = 0; i < $.parseJSON(data).count/pageSize; i++) {
+						$("#page").append(
+								"    <li class='entity' value=" + i + ">" +
+								"<a href=\"#\">" + (i + 1) + "</a></li>\n" +
+								"    <li>\n");
+						$("#allPage").val(i + 1);
+					}
+					$("#page").append("<li id='next'>\n" +
+							"\t\t\t\t\t\t<a href=\"#\" aria-label=\"Next\">\n" +
+							"\t\t\t\t\t\t\t<span aria-hidden=\"true\">&raquo;</span>\n" +
+							"\t\t\t\t\t\t</a>\n" +
+							"\t\t\t\t\t</li");
 				}
 			});
+			displayPage();
+		}
+		/**
+		 * 刷新表单
+		 * */
+		function getForm() {
+			let pageNum = 1;
+			$("#currentPage").val(1);
+			let pageSize = 10;
+			$.ajax({
+				data: {
+					type: "queryDetail",
+					username: $("#user").val(),
+					pageNum: pageNum,
+					pageSize: pageSize
+				},
+				type: "get",
+				url: "/usermanagement",
+				success(data) {
+					$("#detailTbl").empty();
+					$.each($.parseJSON(data).data, function (i, n) {
+						if (n.position == undefined) {
+							n.position = "暂无职位";
+						}
+						$("#detailTbl").append("<tr class=\"active\">\n" +
+								"<td><input name='check' value='" + n.id + "' type=\"checkbox\" /></td>\n" +
+								"<td>" + n.id + "</td>\n" +
+								"<td>" + n.userName + "</td>\n" +
+								"<td>" + n.userEmail + "</td>\n" +
+								"<td>" + n.userProvinceAndCity + "</td>\n" +
+								"<td>" + n.createTime + "</td>\n" +
+								"<td>" + n.position + "</td>\n" +
+								"</tr>");
+					});
+
+					$("#page").empty();
+					$("#page").append("<li id='previous'>\n" +
+							"\t\t\t\t\t\t<a href=\"#\" aria-label=\"Previous\">\n" +
+							"\t\t\t\t\t\t\t<span aria-hidden=\"true\">&laquo;</span>\n" +
+							"\t\t\t\t\t\t</a>\n" +
+							"\t\t\t\t\t</li>");
+					for (var i = 0; i < $.parseJSON(data).count/pageSize; i++) {
+						$("#page").append(
+								"    <li class='entity' value=" + i + ">" +
+								"<a href=\"#\">" + (i + 1) + "</a></li>\n" +
+								"    <li>\n");
+						$("#allPage").val(i + 1);
+					}
+					displayPage();
+					$("#page").append("<li id='next'>\n" +
+							"\t\t\t\t\t\t<a href=\"#\" aria-label=\"Next\">\n" +
+							"\t\t\t\t\t\t\t<span aria-hidden=\"true\">&raquo;</span>\n" +
+							"\t\t\t\t\t\t</a>\n" +
+							"\t\t\t\t\t</li");
+				}
+
+			});
+		}
+
+		function displayPage() {
+			$("#displayPage").val("当前为第" + $("#currentPage").val() + "页，每页10条，共" + $("#allPage").val() + "页");
 		}
 	});
 
@@ -683,6 +781,11 @@
 
 			<!--分页以后再做-->
 			<nav aria-label="Page navigation">
+				<div style="width: 300px">
+					<input type="hidden" id="currentPage" value="1">
+					<input type="text"class="form-group form-control" readonly="readonly" id="displayPage">
+				</div>
+				<input type="hidden" id="allPage">
 				<ul class="pagination" id="page">
 					<li>
 						<a href="#" aria-label="Previous">

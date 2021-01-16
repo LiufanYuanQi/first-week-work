@@ -10,6 +10,14 @@
     <filter-name>LoginFilter</filter-name>
     <filter-class>person.liufan.filter.LoginFilter</filter-class>
   </filter>
+  <filter>
+    <filter-name>AutoLogin</filter-name>
+    <filter-class>person.liufan.filter.AutoLoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AutoLogin</filter-name>
+    <url-pattern>/static/html/login.html</url-pattern>
+  </filter-mapping>
   <filter-mapping>
     <filter-name>LoginFilter</filter-name>
     <url-pattern>/static/html/main/*</url-pattern>

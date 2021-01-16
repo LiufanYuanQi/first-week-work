@@ -21,7 +21,8 @@
 					data:{
 						type: "login",
 						userName: $("#loginAct").val(),
-						userPassword: $("#loginPwd").val()
+						userPassword: $("#loginPwd").val(),
+						autoLogin: $("#autoLogin:checked").is(":checked")
 					},
 					type: "get",
 					url: "/userLogin",
@@ -124,7 +125,7 @@
 							<div style="width: 175px; position: relative;top: 40px;">
 
 								<input id="input1" class="form-control" type="text" placeholder="验证码">
-
+								<label><input type="checkbox" class="checkbox" id="autoLogin" value="autoLogin">三十天免登陆</label>
 							</div>
 
 						</form>
@@ -133,7 +134,6 @@
 					<div style="position: relative;top: 30px;">
 						<button type="button" id="registerBtn" class="btn btn-success btn-lg btn-block"  style="width: 350px; position: relative;top: 55px;">注册</button>
 					</div>
-
 				</div>
 			</form>
 		</div>

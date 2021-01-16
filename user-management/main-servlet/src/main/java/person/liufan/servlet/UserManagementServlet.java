@@ -1,5 +1,6 @@
 package person.liufan.servlet;
 
+import com.github.pagehelper.PageInfo;
 import person.liufan.constant.ServletConsts;
 import person.liufan.service.ProvinceService;
 import person.liufan.service.UserPositionService;
@@ -17,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author liufan E-mail:fan.liu@biz-united.com.cn
@@ -37,7 +36,11 @@ public class UserManagementServlet extends HttpServlet {
          * 查询所有的user并且封装成vo返回前端
          */
         if (ServletConsts.TYPE_QUERY_DETAIL.equals(type)) {
-            List<User> users = userService.listUserDetailByName(request.getParameter("username"));
+            String username = request.getParameter("username");
+            int pageNum = Integer.parseInt(request.getParameter("pageNum"));
+            int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+            PageInfo<User> pageInfo = userService.listUserDetailByName(username,pageNum,pageSize);
+            List<User> users = pageInfo.getList();
             List<UserDetailVO> voList = new ArrayList<>();
             for (User obj : users) {
                 UserDetailVO vo = new UserDetailVO();
@@ -52,7 +55,10 @@ public class UserManagementServlet extends HttpServlet {
                 vo.setPosition(position);
                 voList.add(vo);
             }
-            MyPrintOut.printJson(response, voList);
+            Map map = new HashMap(8);
+            map.put("count", pageInfo.getTotal());
+            map.put("data", voList);
+            MyPrintOut.printJson(response, map);
         }
         /**
          * 通过id获取user对应的user对象输出

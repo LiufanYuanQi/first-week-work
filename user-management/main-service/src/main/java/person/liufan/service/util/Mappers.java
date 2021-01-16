@@ -4,14 +4,9 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import person.liufan.service.entity.City;
-import person.liufan.service.mapper.CityMapper;
-import person.liufan.service.mapper.ProvinceMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author liufan E-mail:fan.liu@biz-united.com.cn

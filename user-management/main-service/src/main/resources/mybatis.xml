@@ -8,6 +8,12 @@
     <settings>
         <setting name="logImpl" value="STDOUT_LOGGING" />
     </settings>
+    <!--pageHelper-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageHelper">
+            <property name="dialect" value="mysql"/>
+        </plugin>
+    </plugins>
     <!--默认使用的环境是development-->
     <environments default="liufan">
         <!--id标识这个环境，一个环境就是一个数据库连接-->
